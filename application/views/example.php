@@ -1,7 +1,8 @@
+<?php if(!isset($outputonly)) { ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
+<meta charset="utf-8" />
 <?php 
 foreach($css_files as $file): ?>
 	<link type="text/css" rel="stylesheet" href="<?php echo $file; ?>" />
@@ -39,8 +40,12 @@ a:hover
 		
 	</div>
 	<div style='height:20px;'></div>  
+<?php } //end if output only ?>
     <div>
 		<?php echo $output; ?>
     </div>
+
+<?php if(!isset($mope)) { ?>
 </body>
 </html>
+<?php } //end if mope only ?>
