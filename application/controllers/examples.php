@@ -256,7 +256,8 @@ class Examples extends CI_Controller {
 		$crud->sub_msg('field_1', 'This XYZ will be LMNO as per ZARP or whatever msg');
 		
 		$output = $crud->render();
-		$this->load->view(/**/);
+		$output->mope = true;
+		$this->load->view(/**/, $output);
 		
 		
 		$crud2 = new grocery_CRUD();
@@ -265,7 +266,7 @@ class Examples extends CI_Controller {
 		//. misc form 2 fsetups & calls
 		$output = $crud2->render();
                 $output->outputonly = true;
-                $this->load->view("administrator/users", $output);
+                $this->load->view(/**/, $output);
 	}
 
 }
