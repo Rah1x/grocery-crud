@@ -245,5 +245,27 @@ class Examples extends CI_Controller {
 			return $output;
 		}
 	}
+	
+	public function multi_forms()
+	{
+		$crud = new grocery_CRUD();
+		//.
+		//.
+		//.
+		//. misc crud setups & calls
+		$crud->sub_msg('field_1', 'This XYZ will be LMNO as per ZARP or whatever msg');
+		
+		$output = $crud->render();
+		$this->load->view(/**/);
+		
+		
+		$crud2 = new grocery_CRUD();
+		//.
+		//.
+		//. misc form 2 fsetups & calls
+		$output = $crud2->render();
+                $output->outputonly = true;
+                $this->load->view("administrator/users", $output);
+	}
 
 }
