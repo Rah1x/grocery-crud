@@ -163,6 +163,7 @@ table th
 	border:1px solid #ccc;
 	border-top:0px;
 	overflow:hidden;
+	display:none;
 }
 .flexigrid div.sDiv2 {
 	float:left;
@@ -360,6 +361,7 @@ div.form-div input.datetime-input
 	float:left;
 	width:200px;
 	padding-top:7px;
+    margin-bottom: 10px;
 }
 .form-input-box
 {
@@ -576,16 +578,10 @@ div.pGroup {
 	top:5px;
 	overflow:visible;
 }
-.flexigrid div.pDiv input, .flexigrid div.pDiv select {
+.flexigrid div.pDiv input {
 	vertical-align:text-top;
 	position:relative;
 	top:-5px;
-}
-.flexigrid div.pDiv input{
-	top:-5px;
-}
-.flexigrid div.pDiv select {
-	top:-3px;
 }
 .flexigrid div.pDiv div.pButton {
 	float:left;
@@ -860,7 +856,7 @@ textarea.texteditor, textarea.mini-texteditor
   *line-height: 20px;
   color: #333333;
   text-align: center;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  /*text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);*/
   vertical-align: middle;
   cursor: pointer;
   background-color: #f5f5f5;
@@ -1452,4 +1448,20 @@ input[type="submit"].btn.btn-mini {
 	content: "Loading...";
 	margin-left: 550px;
 	z-index: 1000;
+}
+
+/*
+.cke_show_borders table.cke_show_border, .cke_show_borders table.cke_show_border > tr > td, .cke_show_borders table.cke_show_border > tr > th, .cke_show_borders table.cke_show_border > tbody > tr > td, .cke_show_borders table.cke_show_border > tbody > tr > th, .cke_show_borders table.cke_show_border > thead > tr > td, .cke_show_borders table.cke_show_border > thead > tr > th, .cke_show_borders table.cke_show_border > tfoot > tr > td, .cke_show_borders table.cke_show_border > tfoot > tr > th {
+    border: 1px dotted #D3D3D3;
+}
+*/
+
+.upload-success-url .image-thumbnail{
+    float:left;
+}
+
+.form-sub-msg {
+    float: right;
+    font-size: 11px;
+    margin: 8px;
 }
