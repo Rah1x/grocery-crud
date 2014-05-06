@@ -41,6 +41,7 @@ if($success_message !== null){?>
 	<p><?php echo $success_message; ?></p>
 <?php }
 ?></div>
+
 <div class="flexigrid" style='width: 100%;' data-unique-hash="<?php echo $unique_hash; ?>">
 	<div id="hidden-operations" class="hidden-operations"></div>
 	<div class="mDiv">
@@ -102,7 +103,7 @@ if($success_message !== null){?>
 		<div class="sDiv2">
 			<?php echo $this->l('list_search');?>: <input type="text" class="qsbsearch_fieldox search_text" name="search_text" size="30" id='search_text'>
 			<select name="search_field" id="search_field">
-				<option value=""><?php echo $this->l('list_search_all');?></option>
+				<?php /*<option value=""><?php echo $this->l('list_search_all');?></option>*/ ?>
 				<?php foreach($columns as $column){?>
 				<option value="<?php echo $column->field_name?>"><?php echo $column->display_as?>&nbsp;&nbsp;</option>
 				<?php }?>
@@ -113,21 +114,25 @@ if($success_message !== null){?>
         	<input type="button" value="<?php echo $this->l('list_clear_filtering');?>" id='search_clear' class="search_clear">
         </div>
 	</div>
+
+    <?php if(!empty($list)){ ?>
 	<div class="pDiv">
 		<div class="pDiv2">
 			<div class="pGroup">
-				<span class="pcontrol">
-					<?php list($show_lang_string, $entries_lang_string) = explode('{paging}', $this->l('list_show_entries')); ?>
-					<?php echo $show_lang_string; ?>
-					<select name="per_page" id='per_page' class="per_page">
-						<?php foreach($paging_options as $option){?>
-							<option value="<?php echo $option; ?>" <?php if($option == $default_per_page){?>selected="selected"<?php }?>><?php echo $option; ?>&nbsp;&nbsp;</option>
-						<?php }?>
-					</select>
-					<?php echo $entries_lang_string; ?>
-					<input type='hidden' name='order_by[0]' id='hidden-sorting' class='hidden-sorting' value='<?php if(!empty($order_by[0])){?><?php echo $order_by[0]?><?php }?>' />
-					<input type='hidden' name='order_by[1]' id='hidden-ordering' class='hidden-ordering'  value='<?php if(!empty($order_by[1])){?><?php echo $order_by[1]?><?php }?>'/>
-				</span>
+				<div class="pSearch pButton quickSearchButton" id='quickSearchButton' title="<?php echo $this->l('list_search');?>">
+					<span></span>
+				</div>
+			</div>
+			<div class="btnseparator">
+			</div>
+			<div class="pGroup">
+				<select name="per_page" id='per_page' class="per_page">
+					<?php foreach($paging_options as $option){?>
+						<option value="<?php echo $option; ?>" <?php if($option == $default_per_page){?>selected="selected"<?php }?>><?php echo $option; ?>&nbsp;&nbsp;</option>
+					<?php }?>
+				</select>
+				<input type='hidden' name='order_by[0]' id='hidden-sorting' class='hidden-sorting' value='<?php if(!empty($order_by[0])){?><?php echo $order_by[0]?><?php }?>' />
+				<input type='hidden' name='order_by[1]' id='hidden-ordering' class='hidden-ordering'  value='<?php if(!empty($order_by[1])){?><?php echo $order_by[1]?><?php }?>'/>
 			</div>
 			<div class="btnseparator">
 			</div>
@@ -180,6 +185,7 @@ if($success_message !== null){?>
 		<div style="clear: both;">
 		</div>
 	</div>
+    <?php } ?>
 	<?php echo form_close(); ?>
 	</div>
 </div>
