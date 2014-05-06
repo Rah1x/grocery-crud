@@ -12,7 +12,7 @@
  * @package    	grocery CRUD
  * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
  * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
- * @version    	1.4.2
+ * @version    	1.2
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -24,7 +24,7 @@
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.2
+ * @version    	1.2R
  * @link		http://www.grocerycrud.com/documentation
  */
 class grocery_CRUD_Model  extends CI_Model  {
@@ -50,7 +50,8 @@ class grocery_CRUD_Model  extends CI_Model  {
     	if($this->table_name === null)
     		return false;
 
-    	$select = "`{$this->table_name}`.*";
+    	//$select = "`{$this->table_name}`.*";
+    	$select = "this_table.*";
 
     	//set_relation special queries
     	if(!empty($this->relation))
@@ -72,7 +73,8 @@ class grocery_CRUD_Model  extends CI_Model  {
     			}
 
     			if($this->field_exists($related_field_title))
-    				$select .= ", `{$this->table_name}`.$related_field_title AS '{$this->table_name}.$related_field_title'";
+    				$select .= ", this_table.$related_field_title AS 'this_table.$related_field_title'";
+                    //$select .= ", `{$this->table_name}`.$related_field_title AS '{$this->table_name}.$related_field_title'";
     		}
     	}
 
@@ -84,7 +86,8 @@ class grocery_CRUD_Model  extends CI_Model  {
 
     	$this->db->select($select, false);
 
-    	$results = $this->db->get($this->table_name)->result();
+    	//$results = $this->db->get($this->table_name)->result();
+        $results = $this->db->get($this->table_name.' as this_table' )->result();
 
     	return $results;
     }
@@ -98,7 +101,8 @@ class grocery_CRUD_Model  extends CI_Model  {
 
     public function set_primary_key($field_name, $table_name = null)
     {
-    	$table_name = $table_name === null ? $this->table_name : $table_name;
+    	//$table_name = $table_name === null ? $this->table_name : $table_name;
+        $table_name = $table_name === null ? 'this_table' : $table_name;
 
     	$this->primary_keys[$table_name] = $field_name;
     }
@@ -127,9 +131,15 @@ class grocery_CRUD_Model  extends CI_Model  {
 	    	}
 
     		//Sorry Codeigniter but you cannot help me with the subquery!
-    		$select .= ", (SELECT GROUP_CONCAT(DISTINCT $field) FROM $selection_table "
+    		/*
+            $select .= ", (SELECT GROUP_CONCAT(DISTINCT $field) FROM $selection_table "
     			."LEFT JOIN $relation_table ON $relation_table.$primary_key_alias_to_selection_table = $selection_table.$primary_key_selection_table "
     			."WHERE $relation_table.$primary_key_alias_to_this_table = `{$this->table_name}`.$this_table_primary_key GROUP BY $relation_table.$primary_key_alias_to_this_table) AS $field_name";
+            */
+
+            $select .= ", ( SELECT GROUP_CONCAT(DISTINCT $selection_table.$title_field_selection_table) FROM $selection_table "
+                ."LEFT JOIN $relation_table ON $relation_table.$primary_key_alias_to_selection_table = $selection_table.$primary_key_selection_table "
+                ."WHERE $relation_table.$primary_key_alias_to_this_table = this_table.$this_table_primary_key GROUP BY $relation_table.$primary_key_alias_to_this_table) AS $field_name";
     	}
 
     	return $select;
@@ -180,13 +190,18 @@ class grocery_CRUD_Model  extends CI_Model  {
     	//set_relation_n_n special queries. We prefer sub queries from a simple join for the relation_n_n as it is faster and more stable on big tables.
     	if(!empty($this->relation_n_n))
     	{
-    		$select = "{$this->table_name}.*";
+    		//$select = "{$this->table_name}.*";
+            $select = "this_table.*";
     		$select = $this->relation_n_n_queries($select);
 
     		$this->db->select($select,false);
+
+    		//return $this->db->get($this->table_name)->num_rows();
+    		return $this->db->get($this->table_name.' as this_table')->num_rows();
     	}
 
-		return $this->db->get($this->table_name)->num_rows();
+    	return $this->db->count_all_results($this->table_name.' as this_table');
+
     }
 
     function set_basic_table($table_name = null)
@@ -199,11 +214,25 @@ class grocery_CRUD_Model  extends CI_Model  {
     	return true;
     }
 
-    function get_edit_values($primary_key_value)
+    function get_edit_values($primary_key_value, $extend_join='')
     {
     	$primary_key_field = $this->get_primary_key();
-    	$this->db->where($primary_key_field,$primary_key_value);
-    	$result = $this->db->get($this->table_name)->row();
+
+        if(!empty($extend_join) && is_array($extend_join))
+        {
+            $this->db->where($this->table_name.'.'.$primary_key_field, $primary_key_value);
+            foreach($extend_join as $ex){
+            list($table, $cond, $type)= $ex;
+            $this->db->join($table, $cond, $type);
+            }
+    	}
+        else
+        {
+            $this->db->where($primary_key_field, $primary_key_value);
+        }
+
+        //$result = $this->db->get($this->table_name)->row();
+        $result = $this->db->get($this->table_name.' as this_table')->row();
     	return $result;
     }
 
@@ -214,7 +243,9 @@ class grocery_CRUD_Model  extends CI_Model  {
 		if($related_primary_key !== false)
 		{
 			$unique_name = $this->_unique_join_name($field_name);
-			$this->db->join( $related_table.' as '.$unique_name , "$unique_name.$related_primary_key = {$this->table_name}.$field_name",'left');
+
+            //$this->db->join( $related_table.' as '.$unique_name , "$unique_name.$related_primary_key = {$this->table_name}.$field_name",'left');
+            $this->db->join( $related_table.' as '.$unique_name , "$unique_name.$related_primary_key = this_table.$field_name",'left');
 
 			$this->relation[$field_name] = array($field_name , $related_table , $related_field_title);
 
